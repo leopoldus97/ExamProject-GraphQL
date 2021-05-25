@@ -1,15 +1,21 @@
+using GraphiQl;
+using GraphQL.Server;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Microsoft.OpenApi.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Test.Core.ApplicationServices;
+using Test.Core.ApplicationServices.Implementations;
+using Test.Core.DomainServices;
+using Test.Graph.Mutation;
+using Test.Graph.Query;
+using Test.Graph.Schema;
+using Test.Graph.Subscription;
+using Test.Graph.Type;
+using Test.Infrastructure;
 
 namespace Test
 {
@@ -22,30 +28,72 @@ namespace Test
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<DatabaseContext>(options => {
+                options.UseNpgsql(Configuration.GetConnectionString("SQLConnection"));
+            });
+
+            /* services
+                .AddScoped(typeof(IGenericRepo<>), typeof(GenericRepo<>))
+                .AddScoped<IFieldService, FieldService>()
+                .AddScoped<MainMutation>()
+                .AddScoped<MainQuery>()
+                .AddScoped<MainSubscription>()
+                .AddScoped<CityGType>()
+                .AddScoped<CountryGType>()
+                .AddScoped<CityAddedMessageGType>();
+
+            services.AddSingleton<ISubscriptionServices, SubscriptionServices>();
+
+            services.AddGraphQL().AddGraphTypes().AddWebSockets(); */
+
+            services
+                .AddScoped(typeof(IGenericRepo<>), typeof(GenericRepo<>))
+                .AddScoped<IFieldService, FieldService>()
+                .AddSingleton<ISubscriptionServices, SubscriptionServices>()
+                .AddScoped<MainMutation>()
+                .AddScoped<MainSubscription>()
+                .AddScoped<MainQuery>()
+                .AddScoped<CityGType>()
+                .AddScoped<CountryGType>()
+                .AddScoped<GraphQLSchema>()
+                .AddScoped<CityAddedMessageGType>()
+                .AddGraphQL(options => {
+                    options.EnableMetrics = true;
+                    options.UnhandledExceptionDelegate = ctx => { Console.WriteLine(ctx.OriginalException); };
+                })
+                .AddSystemTextJson(deserializerSettings => {  }, serializerSettings => {  })
+                .AddWebSockets()
+                .AddDataLoader()
+                .AddGraphTypes(typeof(GraphQLSchema));
+
+            services.AddGraphiQl(x => {
+                x.GraphiQlPath = "/graphiql-ui";
+                x.GraphQlApiPath = "/graphql";
+            });
 
             services.AddControllers();
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Test", Version = "v1" });
-            });
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Test v1"));
+                using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope()) {
+                    serviceScope.ServiceProvider.GetRequiredService<DatabaseContext>().Database.Migrate();
+                }
             }
 
             app.UseRouting();
 
             app.UseAuthorization();
+
+            app.UseGraphQL<GraphQLSchema>();
+
+            app.UseGraphiQl();
+
+            app.UseGraphQLPlayground();
 
             app.UseEndpoints(endpoints =>
             {

@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 
 namespace UserMicroservice.Controllers
 {
-    [Authorize]
     [Route("[controller]")]
     [ApiController]
     public class UserController : ControllerBase
