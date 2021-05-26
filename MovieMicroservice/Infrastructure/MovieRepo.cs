@@ -22,10 +22,11 @@ namespace MovieMicroservice.Infrastructure
             return movie;
         }
 
-        public Movie Delete(int id)
+        public async Task<Movie> Delete(int id)
         {
             Movie movie = ReadById(id);
             _context.Movies.Remove(movie);
+            await _context.SaveChangesAsync();
             return movie ?? null;
         }
 
@@ -36,16 +37,16 @@ namespace MovieMicroservice.Infrastructure
 
         public Movie ReadById(int id)
         {
-            return _context.Movies.Include(m => m.Genre).ThenInclude(g => g.Genre).Include(m => m.Ratings).ThenInclude(r => r.RatedBy).FirstOrDefault(m => m.Id == id);
+            return _context.Movies.AsNoTracking().Include(m => m.Genre).ThenInclude(g => g.Genre).Include(m => m.Ratings).ThenInclude(r => r.RatedBy).FirstOrDefault(m => m.Id == id);
         }
 
-        public Movie Update(int id, Movie movie)
+        public async Task<Movie> Update(int id, Movie movie)
         {
             Movie movieFromDB = ReadById(id);
             if (CompareMovies(movie, movieFromDB))
                 return null;
             _context.Entry(movie).State = EntityState.Modified;
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return movieFromDB;
         }
 

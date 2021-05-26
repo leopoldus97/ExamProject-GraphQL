@@ -39,7 +39,7 @@ namespace Test.Graph.Mutation {
                 subscriptionServices.CityAddedService.AddCityAddedMessage(new CityAddedMessage {
                     CityName = addedCity.Name,
                     CountryName = foundCountry.Name,
-                    IdGraphType = addedCity.Id,
+                    Id = addedCity.Id,
                     Message = "A new city added"
                 });
                 return addedCity;

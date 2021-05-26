@@ -17,7 +17,7 @@ namespace UserMicroservice.Controllers
         [HttpGet]
         public IEnumerable<string> Get()
         {
-            return new string[] { "value1", "value2" };
+            var graphQLClient = new GraphQLHttpClient("http://localhost:5100/graphql", new NewtonsoftJsonSerializer());
         }
 
         // GET api/<UserController>/5

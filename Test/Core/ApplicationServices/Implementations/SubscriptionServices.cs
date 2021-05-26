@@ -5,6 +5,6 @@ namespace Test.Core.ApplicationServices.Implementations {
         {
             this.CityAddedService = new CityAddedService();
         }
-        public CityAddedService CityAddedService { get; set; }
+        public CityAddedService CityAddedService { get; }
     }
 }

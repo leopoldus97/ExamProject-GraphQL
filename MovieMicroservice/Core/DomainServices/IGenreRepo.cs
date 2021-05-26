@@ -1,12 +1,13 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using MovieMicroservice.Core.Entity;
 
 namespace MovieMicroservice.Core.DomainServices {
     public interface IGenreRepo {
-        Genre Create(Genre movie);
+        Task<Genre> Create(Genre genre);
         IEnumerable<Genre> ReadAll();
         Genre ReadById(int id);
-        Genre Update(int id, Genre movie);
-        Genre Delete(int id);
+        Task<Genre> Update(int id, Genre genre);
+        Task<Genre> Delete(int id);
     }
 }

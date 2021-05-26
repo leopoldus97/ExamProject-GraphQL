@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using System;
 using Test.Core.ApplicationServices;
 using Test.Core.ApplicationServices.Implementations;
@@ -30,7 +31,8 @@ namespace Test
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<DatabaseContext>(options => {
+            services.AddDbContext<DatabaseContext>(options =>
+            {
                 options.UseNpgsql(Configuration.GetConnectionString("SQLConnection"));
             });
 
@@ -59,16 +61,18 @@ namespace Test
                 .AddScoped<CountryGType>()
                 .AddScoped<GraphQLSchema>()
                 .AddScoped<CityAddedMessageGType>()
-                .AddGraphQL(options => {
+                .AddGraphQL(options =>
+                {
                     options.EnableMetrics = true;
                     options.UnhandledExceptionDelegate = ctx => { Console.WriteLine(ctx.OriginalException); };
                 })
-                .AddSystemTextJson(deserializerSettings => {  }, serializerSettings => {  })
+                .AddSystemTextJson(deserializerSettings => { }, serializerSettings => { })
                 .AddWebSockets()
                 .AddDataLoader()
                 .AddGraphTypes(typeof(GraphQLSchema));
 
-            services.AddGraphiQl(x => {
+            services.AddGraphiQl(x =>
+            {
                 x.GraphiQlPath = "/graphiql-ui";
                 x.GraphQlApiPath = "/graphql";
             });
@@ -80,20 +84,23 @@ namespace Test
         {
             if (env.IsDevelopment())
             {
-                using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope()) {
+                using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
+                {
                     serviceScope.ServiceProvider.GetRequiredService<DatabaseContext>().Database.Migrate();
                 }
             }
 
-            app.UseRouting();
-
-            app.UseAuthorization();
+            app.UseWebSockets();
 
             app.UseGraphQL<GraphQLSchema>();
+
+            app.UseGraphQLWebSockets<GraphQLSchema>();
 
             app.UseGraphiQl();
 
             app.UseGraphQLPlayground();
+
+            app.UseRouting();
 
             app.UseEndpoints(endpoints =>
             {

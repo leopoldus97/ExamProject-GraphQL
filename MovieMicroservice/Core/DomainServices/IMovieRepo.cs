@@ -7,7 +7,7 @@ namespace MovieMicroservice.Core.DomainServices {
         Task<Movie> Create(Movie movie);
         IEnumerable<Movie> ReadAll();
         Movie ReadById(int id);
-        Movie Update(int id, Movie movie);
-        Movie Delete(int id);
+        Task<Movie> Update(int id, Movie movie);
+        Task<Movie> Delete(int id);
     }
 }

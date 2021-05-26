@@ -24,11 +24,11 @@ namespace MovieMicroservice.Core.ApplicationServices.Implementations
             return await _repo.Create(movie);
         }
 
-        public Movie Delete(int id)
+        public async Task<Movie> Delete(int id)
         {
             if (id < 1)
                 throw new Exception("Id has to be a number bigger than 0!");
-            return _repo.Delete(id);
+            return await _repo.Delete(id);
         }
 
         public IEnumerable<Movie> ReadAll()
@@ -43,7 +43,7 @@ namespace MovieMicroservice.Core.ApplicationServices.Implementations
             return _repo.ReadById(id);
         }
 
-        public Movie Update(int id, Movie movie)
+        public async Task<Movie> Update(int id, Movie movie)
         {
             if (id < 1 || !movie.Id.HasValue)
                 throw new Exception("Id error!");
@@ -53,7 +53,7 @@ namespace MovieMicroservice.Core.ApplicationServices.Implementations
                 throw new Exception("Title cannot be empty!");
             if (movie.Genre == null)
                 throw new Exception("A Genre has to be selected!");
-            return _repo.Update(id, movie);
+            return await _repo.Update(id, movie);
         }
     }
 }

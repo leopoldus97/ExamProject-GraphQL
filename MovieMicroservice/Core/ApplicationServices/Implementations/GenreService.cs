@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Threading.Tasks;
 using MovieMicroservice.Core.DomainServices;
 using MovieMicroservice.Core.Entity;
 
@@ -13,20 +13,20 @@ namespace MovieMicroservice.Core.ApplicationServices.Implementations
         {
             _repo = repo;
         }
-        public Genre Create(Genre genre)
+        public async Task<Genre> Create(Genre genre)
         {
             if (genre.Id.HasValue)
                 throw new Exception("Id should be empty!");
             if (string.IsNullOrEmpty(genre.Name))
                 throw new Exception("Genre name cannot be empty!");
-            return _repo.Create(genre);
+            return await _repo.Create(genre);
         }
 
-        public Genre Delete(int id)
+        public async Task<Genre> Delete(int id)
         {
             if (id < 1)
                 throw new Exception("Id has to be a number bigger than 0!");
-            return _repo.Delete(id);
+            return await _repo.Delete(id);
         }
 
         public IEnumerable<Genre> ReadAll()
@@ -41,13 +41,13 @@ namespace MovieMicroservice.Core.ApplicationServices.Implementations
             return _repo.ReadById(id);
         }
 
-        public Genre Update(int id, Genre genre)
+        public async Task<Genre> Update(int id, Genre genre)
         {
             if (genre.Id.HasValue)
                 throw new Exception("Id should be empty!");
             if (string.IsNullOrEmpty(genre.Name))
                 throw new Exception("Genre name cannot be empty!");
-            return _repo.Create(genre);
+            return await _repo.Create(genre);
         }
     }
 }

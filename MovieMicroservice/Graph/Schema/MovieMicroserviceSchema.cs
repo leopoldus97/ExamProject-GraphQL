@@ -1,13 +1,11 @@
 using System;
 using Microsoft.Extensions.DependencyInjection;
-using GraphQL.Types;
-using MovieMicroservice.Core.ApplicationServices.Implementations;
-using MovieMicroservice.Infrastructure;
-using MovieMicroservice.GraphQL.Mutations;
+using MovieMicroservice.Graph.Mutation;
+using MovieMicroservice.Graph.Query;
 
-namespace MovieMicroservice.GraphQL.Schemas
+namespace MovieMicroservice.Graph.Schema
 {
-    public class MovieMicroserviceSchema : Schema {
+    public class MovieMicroserviceSchema : GraphQL.Types.Schema {
         public MovieMicroserviceSchema(IServiceProvider serviceProvider) : base(serviceProvider)
         {
             //Query = new MovieQuery(serviceProvider.GetRequiredService<MovieRepo>());
