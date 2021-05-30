@@ -1,5 +1,6 @@
 using System;
 using GraphQL.Server;
+using GraphQL.Validation.Complexity;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -59,22 +60,21 @@ namespace MovieMicroservice
                 .AddScoped<MovieGenreType>()
                 .AddScoped<MovieRatingType>()
                 .AddScoped<MovieInputType>()
-                .AddScoped<MovieMicroserviceSchema>()
-                .AddGraphQL((options/*, provider*/) =>
+                .AddScoped<MovieMicroserviceSchema>();
+
+            services.AddGraphQL(options =>
                 {
-                    //var graphQLOptions = Configuration.GetSection("GraphQL").Get<GraphQLOptions>();
-                    //options.ComplexityConfiguration = graphQLOptions.ComplexityConfiguration;
+                    var compConf = new ComplexityConfiguration
+                    {
+                        MaxDepth = 3,
+                        MaxComplexity = 5,
+                        MaxRecursionCount = 2
+                    };
                     options.EnableMetrics = true;
                     options.UnhandledExceptionDelegate = ctx => { Console.WriteLine(ctx.OriginalException); };
-                    options.ComplexityConfiguration.MaxDepth = 3;
-                    options.ComplexityConfiguration.MaxRecursionCount = 2;
-                    options.ComplexityConfiguration.MaxComplexity = 10;
-
-                    /* var logger = provider.GetRequiredService<ILogger<Startup>>();
-                    options.UnhandledExceptionDelegate = ctx => 
-                        logger.LogError("{Error} occured", ctx.OriginalException.Message); */
+                    options.ComplexityConfiguration = compConf;
                 })
-            .AddSystemTextJson(deserializationSettings => {  }, serializationSettings => {  })
+            .AddSystemTextJson(deserializationSettings => { }, serializationSettings => { })
             .AddDataLoader()
             .AddGraphTypes(typeof(MovieMicroserviceSchema));
 
@@ -98,7 +98,7 @@ namespace MovieMicroservice
             app.UseGraphQL<MovieMicroserviceSchema>();
 
             app.UseGraphQLGraphiQL();
-            
+
             app.UseGraphQLPlayground();
 
             app.UseRouting();

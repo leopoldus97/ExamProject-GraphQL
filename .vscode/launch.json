@@ -9,9 +9,9 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/Test/bin/Debug/net5.0/Test.dll",
+            "program": "${workspaceFolder}/MovieMicroservice/bin/Debug/net5.0/MovieMicroservice.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/Test",
+            "cwd": "${workspaceFolder}/MovieMicroservice",
             "stopAtEntry": false
         },
         {

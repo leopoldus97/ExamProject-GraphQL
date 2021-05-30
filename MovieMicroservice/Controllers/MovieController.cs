@@ -23,8 +23,8 @@ namespace MovieMicroservice.Controllers
             else
                 return NoContent();
         }
-        [HttpGet("{id}")]
-        public ActionResult GetById(int id)
+        [HttpGet]
+        public ActionResult GetById([FromQuery] int id)
         {
             var movie = _service.ReadById(id);
             if (movie != null)

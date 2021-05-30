@@ -2,7 +2,6 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using MovieMicroservice.Core.ApplicationServices;
 using MovieMicroservice.Core.Entity;
-using Newtonsoft.Json;
 
 namespace MovieMicroservice.Controllers
 {

@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-    <UserSecretsId>aspnet-UserMicroservice-0EEEB971-1D66-4A65-B478-75701C048B08</UserSecretsId>
+    <UserSecretsId>aspnet-LoginMicroservice-0EEEB971-1D66-4A65-B478-75701C048B08</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
 

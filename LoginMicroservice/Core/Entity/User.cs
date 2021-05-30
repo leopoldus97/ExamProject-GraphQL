@@ -1,6 +1,6 @@
 using System;
 
-namespace UserMicroservice.Core.Entity
+namespace LoginMicroservice.Core.Entity
 {
     public class User
     {
